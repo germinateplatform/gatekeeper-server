@@ -88,18 +88,30 @@ public class Email
 			if (!CollectionUtils.isEmpty(dbSystems))
 				query.and(VIEW_USER_PERMISSIONS.DATABASE_ID.in(dbSystems));
 
-			query.forEach(vp -> {
-				List<ViewUserPermissions> ids = dbToPrimaryContact.get(vp.getDatabaseId());
+			Map<Integer, List<ViewUserPermissions>> adminMap = new HashMap<>();
+
+			query.forEach(admin -> {
+				List<ViewUserPermissions> adminsForDb = adminMap.get(admin.getDatabaseId());
+
+				if (adminsForDb == null)
+					adminsForDb = new ArrayList<>();
+
+				adminsForDb.add(admin.into(ViewUserPermissions.class));
+
+				adminMap.put(admin.getDatabaseId(), adminsForDb);
+			});
+
+			adminMap.forEach((dbId, admins) -> {
+				List<ViewUserPermissions> ids = dbToPrimaryContact.get(dbId);
 
 				if (ids == null)
 					ids = new ArrayList<>();
 
 				// Only add admin ID if there hasn't been a primary contact in the first query.
 				if (ids.isEmpty())
-				{
-					ids.add(vp.into(ViewUserPermissions.class));
-					dbToPrimaryContact.put(vp.getDatabaseId(), ids);
-				}
+					ids.addAll(admins);
+
+				dbToPrimaryContact.put(dbId, ids);
 			});
 		}
 		catch (SQLException e)
