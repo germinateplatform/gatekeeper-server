@@ -37,7 +37,7 @@ If you have docker-compose available, things are as simple as defining this `doc
 version: '3.3'
 services:
   mysql:
-    image: mysql:5.7
+    image: mysql:8.4
     ports:
       - 9306:3306
     volumes:
@@ -98,7 +98,7 @@ docker run -d \
     -v mysql:/var/lib/mysql \
     -p 9306:3306 \
     --restart unless-stopped \
-    mysql:5.7
+    mysql:8.4
 
 docker run -d \
     --name gatekeeper \
@@ -129,7 +129,7 @@ Setting up Gatekeeper manually involves a few steps that have to be done for eve
 Server:
 - Java 11 or above
 - Tomcat 8.5.12 or above
-- MySQL 5.7.22 or above (or MariaDB 10.5.0 or above)
+- MySQL 8.4 or above (or MariaDB 10.5.0 or above)
 
 Client:
 - Node.js 10.15.1 or above
